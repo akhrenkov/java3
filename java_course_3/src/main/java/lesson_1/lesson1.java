@@ -1,7 +1,89 @@
 package lesson_1;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class lesson1 {
     public static void main(String[] args) {
-        System.out.println("Hello World");
+        Box<Fruit> box = new Box<Fruit>();
+        Box<Apple> boxa = new Box<Apple>();
+        boxa.addFruit(new Apple());
+        boxa.transfer(box);
+    }
+
+
+    public static void swap(Object[] arr, int x1, int x2) {
+        Object temp = arr[x1];
+        arr[x1] = arr[x2];
+        arr[x2] = temp;
+    }
+
+
+
+    public static <T> ArrayList<T> convert(T[] arr) {
+        return new ArrayList<T>(Arrays.asList(arr));
+    }
+}
+
+class Box<T extends Fruit> {
+    private ArrayList<T> list;
+
+    public Box(T... arr) {
+        list = new ArrayList<T>(Arrays.asList(arr));
+    }
+
+    public float getWeight() {
+        if (list.size() == 0) return 0.0f;
+        return list.get(0).getWeight() * list.size();
+    }
+
+    public void addFruit(T fruit) {
+        list.add(fruit);
+    }
+
+    public boolean compare(Box another) {
+        return Math.abs(this.getWeight() - another.getWeight()) < 0.00001;
+    }
+
+    public void transfer(Box<? super T> another) {
+        // берем чужую коробку и в чужой лист добавляем наш лист
+        // а потом его чистим
+        another.list.addAll(this.list);
+        this.list.clear();
+    }
+}
+
+abstract class Fruit {
+    protected float weight;
+
+    public abstract Fruit newInstance();
+
+    public float getWeight() {
+        return weight;
+    }
+
+    public Fruit(float weight) {
+        this.weight = weight;
+    }
+}
+
+class Orange extends Fruit {
+    public Orange() {
+        super(1.5f);
+    }
+
+    @Override
+    public Fruit newInstance() {
+        return new Orange();
+    }
+}
+
+class Apple extends Fruit {
+    public Apple() {
+        super(1.0f);
+    }
+
+    @Override
+    public Fruit newInstance() {
+        return new Apple();
     }
 }
